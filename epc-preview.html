@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ── SEO META — auto-populated by JS ── -->
+  <title id="meta-title">EPC Certificates | Energy Assessor</title>
+  <meta name="description" id="meta-desc" content="Fast, affordable EPC certificates for sales and rentals. Fully accredited domestic energy assessor. Same/next day appointments available." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ── FONTS ── Playfair Display + Plus Jakarta Sans ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --ink:        #0D1B2A;
+      --ink-mid:    #3D5166;
+      --ink-light:  #7A90A4;
+      --canvas:     #F5F3EE;
+      --surface:    #FFFFFF;
+      --rule:       #E4E0D8;
+      --accent:     #1B6CA8;
+      --accent-dk:  #145389;
+      --accent-lt:  #EBF4FC;
+      --gold:       #C8922A;
+      --gold-lt:    #FDF6E9;
+      --green:      #1A7A4A;
+      --green-lt:   #E8F6EE;
+      --wa:         #25D366;
+      --ff-display: 'Playfair Display', Georgia, serif;
+      --ff-body:    'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
+      --r:          10px;
+      --r-lg:       20px;
+      --sh-sm:      0 2px 12px rgba(13,27,42,0.07);
+      --sh-md:      0 8px 32px rgba(13,27,42,0.10);
+      --sh-lg:      0 20px 60px rgba(13,27,42,0.14);
+      --max:        1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-body);
+      background: var(--canvas);
+      color: var(--ink-mid);
+      line-height: 1.7;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    .container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    h1,h2,h3,h4 { font-family: var(--ff-display); color: var(--ink); line-height: 1.2; }
+    h1 { font-size: clamp(2.2rem, 5.5vw, 3.6rem); font-weight: 800; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.5rem); font-weight: 700; }
+    h3 { font-size: 1.2rem; font-weight: 600; }
+    p  { margin-bottom: 1em; }
+    p:last-child { margin-bottom: 0; }
+
+    section { padding: 88px 0; }
+
+    .label {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    }
+    .label::before { content: ''; display: block; width: 20px; height: 2px; background: var(--accent); border-radius: 2px; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: var(--ff-body); font-weight: 700; font-size: 0.95rem;
+      padding: 15px 30px; border-radius: var(--r); border: 2px solid transparent;
+      cursor: pointer; transition: all 0.18s; white-space: nowrap; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-dk); }
+    .btn-outline { background: transparent; border-color: rgba(255,255,255,0.4); color: #fff; }
+    .btn-outline:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.7); }
+    .btn-call { background: var(--green); color: #fff; font-size: 1rem; padding: 17px 34px; }
+    .btn-call:hover { background: #156040; }
+    .btn-wa { background: var(--wa); color: #fff; }
+    .btn-wa:hover { background: #1fba59; }
+    .btn-gold { background: var(--gold); color: #fff; }
+    .btn-gold:hover { background: #b07e22; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+    /* ── LOADING STATE ── */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--ink);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; transition: opacity 0.5s;
+    }
+    #loading-screen.hidden { opacity: 0; pointer-events: none; }
+    .loader-logo { font-family: var(--ff-display); font-size: 1.4rem; color: #fff; font-weight: 700; }
+    .loader-bar { width: 200px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden; }
+    .loader-fill { height: 100%; width: 0; background: var(--accent); border-radius: 3px; animation: load 1.2s ease forwards; }
+    @keyframes load { to { width: 100%; } }
+    .loader-text { color: var(--ink-light); font-size: 0.85rem; }
+
+    /* ── STICKY HEADER ── */
+    .sticky-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      background: rgba(13,27,42,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px; box-shadow: var(--sh-md);
+    }
+    .header-brand { font-family: var(--ff-display); font-size: 1rem; color: #fff; font-weight: 700; line-height: 1.2; }
+    .header-brand span { display: block; font-family: var(--ff-body); font-size: 0.72rem; font-weight: 500; color: var(--ink-light); letter-spacing: 0.06em; text-transform: uppercase; }
+    .header-cta { display: flex; align-items: center; gap: 10px; }
+    .header-phone {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--green); color: #fff;
+      font-weight: 700; font-size: 0.9rem;
+      padding: 10px 18px; border-radius: var(--r);
+      transition: background 0.15s;
+    }
+    .header-phone:hover { background: #156040; }
+
+    /* ── HERO ── */
+    #hero {
+      background: var(--ink);
+      padding: 120px 0 80px;
+      position: relative; overflow: hidden;
+      min-height: 100vh; display: flex; align-items: center;
+    }
+    /* Atmospheric background */
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(27,108,168,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(200,146,42,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    /* Diagonal accent line */
+    #hero::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 50%; height: 100%;
+      background: linear-gradient(135deg, transparent 49%, rgba(27,108,168,0.06) 50%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    @media (min-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr 380px; }
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(27,108,168,0.2);
+      border: 1px solid rgba(27,108,168,0.35);
+      color: #7EC8F0; font-size: 0.76rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 7px 16px; border-radius: 100px; margin-bottom: 22px;
+    }
+    .hero-eyebrow svg { flex-shrink: 0; }
+    #hero h1 { color: #fff; margin-bottom: 8px; }
+    #hero h1 em { font-style: normal; color: #7EC8F0; }
+    .hero-location {
+      font-family: var(--ff-display);
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--gold); font-weight: 600; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-sub { font-size: 1.1rem; color: #94A8BC; margin-bottom: 28px; max-width: 520px; }
+    .price-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--gold-lt); border: 1.5px solid rgba(200,146,42,0.25);
+      padding: 10px 22px; border-radius: 100px; margin-bottom: 32px;
+    }
+    .price-badge strong { font-size: 1.3rem; color: var(--gold); font-family: var(--ff-display); }
+    .price-badge span { font-size: 0.85rem; color: var(--ink-mid); font-weight: 500; }
+    .trust-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .trust-chip {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #B0C4D4; font-size: 0.82rem; font-weight: 500;
+      padding: 7px 15px; border-radius: 100px;
+    }
+    .trust-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+    /* Hero card */
+    .hero-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--r-lg);
+      padding: 32px;
+      backdrop-filter: blur(8px);
+    }
+    .assessor-photo {
+      width: 110px; height: 110px; border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 3px solid var(--accent);
+      margin: 0 auto 18px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .assessor-photo svg { opacity: 0.35; }
+    .assessor-photo .photo-placeholder-text {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(27,108,168,0.85); color: #fff;
+      font-size: 0.6rem; font-weight: 600; text-align: center;
+      padding: 3px; letter-spacing: 0.04em;
+    }
+    .hero-card-name { font-family: var(--ff-display); font-size: 1.3rem; color: #fff; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .hero-card-title { color: #7A90A4; font-size: 0.85rem; text-align: center; margin-bottom: 20px; }
+    .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .stat-box {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--r); padding: 12px; text-align: center;
+    }
+    .stat-box strong { display: block; font-size: 1.2rem; color: #fff; font-family: var(--ff-display); }
+    .stat-box span { font-size: 0.73rem; color: #7A90A4; font-weight: 500; }
+    .card-btns { display: flex; flex-direction: column; gap: 10px; }
+    .card-btns a { justify-content: center; }
+    .accred-badge {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: rgba(27,108,168,0.15); border: 1px solid rgba(27,108,168,0.3);
+      color: #7EC8F0; font-size: 0.75rem; font-weight: 600;
+      padding: 8px 14px; border-radius: var(--r); margin-top: 12px;
+      text-align: center;
+    }
+
+    /* ── TRUST BAR ── */
+    #trust-bar {
+      background: var(--accent);
+      padding: 40px 0;
+      position: relative; overflow: hidden;
+    }
+    #trust-bar::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .trust-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 28px; position: relative; }
+    @media (min-width: 640px) { .trust-grid { grid-template-columns: repeat(4,1fr); } }
+    .trust-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+    .trust-icon {
+      width: 54px; height: 54px;
+      background: rgba(255,255,255,0.15); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.4rem;
+    }
+    .trust-item strong { color: #fff; font-size: 0.9rem; font-weight: 700; line-height: 1.3; }
+    .trust-item span { color: rgba(255,255,255,0.7); font-size: 0.78rem; }
+
+    /* ── SERVICES ── */
+    #services { background: var(--surface); }
+    .services-header { display: grid; grid-template-columns: 1fr; gap: 40px; margin-bottom: 52px; }
+    @media (min-width: 768px) { .services-header { grid-template-columns: 1fr 1fr; align-items: end; } }
+    .services-grid { display: grid; grid-template-columns: 1fr; gap: 22px; }
+    @media (min-width: 640px) { .services-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (min-width: 900px) { .services-grid { grid-template-columns: repeat(3,1fr); } }
+    .service-card {
+      background: var(--canvas);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--r-lg);
+      padding: 30px 28px;
+      transition: all 0.22s;
+      position: relative; overflow: hidden;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      opacity: 0; transition: opacity 0.22s;
+    }
+    .service-card:hover { border-color: var(--accent); box-shadow: var(--sh-md); transform: translateY(-4px); }
+    .service-card:hover::after { opacity: 1; }
+    .service-icon {
+      width: 54px; height: 54px;
+      background: var(--accent-lt); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); margin-bottom: 18px; font-size: 1.4rem;
+    }
+    .service-card h3 { color: var(--ink); margin-bottom: 10px; font-size: 1.1rem; }
+    .service-card p { font-size: 0.9rem; color: var(--ink-mid); }
+    .service-tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--green-lt); color: var(--green);
+      padding: 4px 10px; border-radius: 100px; margin-bottom: 12px;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--canvas); }
+    .about-inner {
+      display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center;
+    }
+    @media (min-width: 768px) { .about-inner { grid-template-columns: 300px 1fr; } }
+    .about-visual { position: relative; }
+    .about-photo-wrap {
+      width: 260px; height: 320px;
+      border-radius: var(--r-lg);
+      background: var(--rule);
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      box-shadow: var(--sh-lg);
+      border: 3px solid var(--surface);
+    }
+    .about-photo-wrap svg { opacity: 0.25; }
+    .about-card {
+      position: absolute; bottom: -20px; right: -10px;
+      background: var(--accent);
+      color: #fff; border-radius: var(--r);
+      padding: 14px 18px; box-shadow: var(--sh-md);
+      font-size: 0.82rem; font-weight: 600;
+      max-width: 160px; text-align: center;
+    }
+    .about-card strong { display: block; font-size: 1.6rem; font-family: var(--ff-display); }
+    .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .pill {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface); border: 1.5px solid var(--rule);
+      color: var(--ink); font-size: 0.83rem; font-weight: 600;
+      padding: 8px 16px; border-radius: 100px; box-shadow: var(--sh-sm);
+    }
+    .pill svg { color: var(--accent); flex-shrink: 0; }
+
+    /* ── COVERAGE ── */
+    #coverage { background: var(--ink); position: relative; overflow: hidden; }
+    #coverage::before {
+      content: '';
+      position: absolute; bottom: -100px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(27,108,168,0.15) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    #coverage .label { color: #7EC8F0; }
+    #coverage .label::before { background: #7EC8F0; }
+    #coverage h2 { color: #fff; }
+    #coverage .intro { color: #7A90A4; font-size: 1rem; max-width: 520px; margin-top: 8px; }
+    .area-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 40px; }
+    @media (min-width: 480px) { .area-grid { grid-template-columns: repeat(3,1fr); } }
+    @media (min-width: 768px) { .area-grid { grid-template-columns: repeat(4,1fr); } }
+    .area-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: #C8D8E4; font-size: 0.88rem; font-weight: 500;
+      padding: 12px 16px; border-radius: var(--r);
+      transition: all 0.15s;
+    }
+    .area-chip:hover { background: rgba(27,108,168,0.2); border-color: rgba(27,108,168,0.4); color: #7EC8F0; }
+    .area-chip::before { content: '📍'; font-size: 0.85rem; flex-shrink: 0; }
+
+    /* ── PROCESS ── */
+    #process { background: var(--surface); }
+    .process-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 52px; }
+    @media (min-width: 768px) { .process-grid { grid-template-columns: repeat(3,1fr); } }
+    .process-step { position: relative; }
+    .step-connector {
+      display: none;
+      position: absolute; top: 36px; left: 100%; width: 100%;
+      height: 2px; background: linear-gradient(90deg, var(--rule), transparent);
+      z-index: 0;
+    }
+    @media (min-width: 768px) { .step-connector { display: block; } }
+    .step-num {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dk));
+      color: #fff; font-family: var(--ff-display); font-size: 1.6rem; font-weight: 800;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px; box-shadow: 0 6px 20px rgba(27,108,168,0.35);
+      position: relative; z-index: 1;
+    }
+    .process-step h3 { color: var(--ink); margin-bottom: 10px; }
+    .process-step p { font-size: 0.92rem; }
+
+    /* ── REVIEWS ── */
+    #reviews { background: var(--canvas); }
+    .reviews-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 48px; }
+    @media (min-width: 640px) { .reviews-grid { grid-template-columns: repeat(3,1fr); } }
+    .review-card {
+      background: var(--surface);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--r-lg); padding: 28px;
+      box-shadow: var(--sh-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+    }
+    .review-card:hover { box-shadow: var(--sh-md); transform: translateY(-3px); }
+    .quote-mark {
+      font-family: var(--ff-display); font-size: 4rem; line-height: 1;
+      color: var(--accent-lt); margin-bottom: 8px; display: block;
+    }
+    .stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 14px; }
+    .review-text { font-size: 0.92rem; font-style: italic; color: var(--ink-mid); margin-bottom: 20px; line-height: 1.7; }
+    .reviewer { display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1.5px solid var(--rule); }
+    .reviewer-av {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--accent-lt); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+      font-family: var(--ff-display);
+    }
+    .reviewer strong { display: block; font-size: 0.9rem; color: var(--ink); }
+    .reviewer span { font-size: 0.78rem; color: var(--ink-light); }
+
+    /* ── CTA BAND ── */
+    #cta-band {
+      background: linear-gradient(135deg, var(--ink) 0%, #1B3A5C 100%);
+      padding: 80px 0; text-align: center; position: relative; overflow: hidden;
+    }
+    #cta-band::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(27,108,168,0.2) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    #cta-band h2 { color: #fff; margin-bottom: 12px; position: relative; }
+    #cta-band h2 em { font-style: normal; color: var(--gold); }
+    #cta-band p { color: #7A90A4; max-width: 480px; margin: 0 auto 32px; position: relative; }
+    #cta-band .btn-group { justify-content: center; position: relative; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--surface); }
+    .contact-inner { display: grid; grid-template-columns: 1fr; gap: 56px; }
+    @media (min-width: 768px) { .contact-inner { grid-template-columns: 1fr 1fr; align-items: start; } }
+    .contact-detail {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 0; border-bottom: 1.5px solid var(--rule);
+    }
+    .contact-detail:last-of-type { border-bottom: none; }
+    .contact-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      background: var(--accent-lt); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+    }
+    .contact-detail strong { display: block; font-size: 0.82rem; color: var(--ink-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+    .contact-detail a, .contact-detail p { color: var(--ink); font-weight: 600; font-size: 1rem; }
+    .contact-detail a:hover { color: var(--accent); }
+
+    /* FORM */
+    .form-wrap {
+      background: var(--canvas); border: 1.5px solid var(--rule);
+      border-radius: var(--r-lg); padding: 36px;
+      box-shadow: var(--sh-sm);
+    }
+    .form-title { font-family: var(--ff-display); font-size: 1.4rem; color: var(--ink); margin-bottom: 6px; }
+    .form-sub { font-size: 0.88rem; color: var(--ink-light); margin-bottom: 24px; }
+    .fg { margin-bottom: 18px; }
+    .fg label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 7px; letter-spacing: 0.02em; }
+    .fg input, .fg textarea, .fg select {
+      width: 100%; padding: 13px 16px;
+      border: 1.5px solid var(--rule); border-radius: var(--r);
+      font-family: var(--ff-body); font-size: 0.95rem; color: var(--ink);
+      background: var(--surface); transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(27,108,168,0.12);
+    }
+    .fg textarea { resize: vertical; min-height: 100px; }
+    .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 440px) { .fg-row { grid-template-columns: 1fr; } }
+    .form-btn { width: 100%; padding: 17px; font-size: 1rem; border-radius: var(--r); margin-top: 4px; border: none; }
+    .form-note { text-align: center; font-size: 0.76rem; color: var(--ink-light); margin-top: 12px; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--ink); padding: 52px 0 28px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
+    @media (min-width: 640px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 900px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
+    footer h4 { font-family: var(--ff-display); color: #fff; font-size: 1.1rem; margin-bottom: 14px; }
+    footer p, footer a { font-size: 0.88rem; color: #5A7A94; line-height: 1.8; }
+    footer a:hover { color: #7EC8F0; }
+    .footer-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(27,108,168,0.15); border: 1px solid rgba(27,108,168,0.3);
+      color: #7EC8F0; font-size: 0.78rem; font-weight: 600;
+      padding: 7px 13px; border-radius: 8px; margin-top: 14px;
+    }
+    .footer-hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin-bottom: 20px; }
+    .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+    .footer-bottom p { font-size: 0.76rem; color: #3A5A74; }
+
+    /* ── MOBILE STICKY CALL ── */
+    .mob-call {
+      display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 800;
+      background: var(--green); color: #fff;
+      font-family: var(--ff-body); font-weight: 700; font-size: 1.05rem;
+      padding: 17px 20px; align-items: center; justify-content: center; gap: 10px;
+      border-top: 3px solid rgba(255,255,255,0.15);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+      text-decoration: none; transition: background 0.15s;
+    }
+    .mob-call:hover { background: #156040; }
+    @media (min-width: 768px) { .mob-call { display: none; } }
+
+    /* WhatsApp float */
+    .wa-float {
+      display: none; position: fixed; bottom: 28px; right: 24px; z-index: 800;
+      width: 60px; height: 60px; background: var(--wa);
+      border-radius: 50%; align-items: center; justify-content: center;
+      box-shadow: var(--sh-lg); transition: transform 0.2s;
+      text-decoration: none;
+    }
+    .wa-float:hover { transform: scale(1.1); }
+    @media (min-width: 768px) { .wa-float { display: flex; } }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fu { animation: fadeUp 0.6s ease both; }
+    .d1 { animation-delay: 0.08s; }
+    .d2 { animation-delay: 0.18s; }
+    .d3 { animation-delay: 0.28s; }
+    .d4 { animation-delay: 0.40s; }
+    .d5 { animation-delay: 0.52s; }
+
+    /* ── PREVIEW BANNER (remove for live site) ── */
+    .preview-banner {
+      background: var(--gold); color: #fff;
+      text-align: center; padding: 10px 20px;
+      font-size: 0.82rem; font-weight: 700;
+      position: relative; z-index: 1000;
+      letter-spacing: 0.04em;
+    }
+    .preview-banner span { opacity: 0.8; font-weight: 400; }
+
+    .tc { text-align: center; }
+    .mt-8 { margin-top: 8px; }
+    .mt-32 { margin-top: 32px; }
+    .mb-0 { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOADING SCREEN ── -->
+  <div id="loading-screen">
+    <div class="loader-logo">Wilson's Web</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+    <div class="loader-text">Building your preview…</div>
+  </div>
+
+  <!-- ── PREVIEW BANNER ── -->
+  <div class="preview-banner">
+    🔍 CLIENT PREVIEW — Wilson's Web Services &nbsp;<span>· This is a personalised preview. Content is auto-populated from your onboarding form.</span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       STICKY HEADER
+  ════════════════════════════════════════ -->
+  <header class="sticky-header">
+    <div class="header-brand">
+      <span id="hdr-name">Your Name</span>
+      EPC Assessor
+    </div>
+    <div class="header-cta">
+      <a href="#" id="hdr-call" class="header-phone" aria-label="Call now">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.96-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span id="hdr-phone-num">Loading…</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-inner">
+
+        <div>
+          <div class="hero-eyebrow fu">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            Fully Qualified &amp; Government Accredited
+          </div>
+
+          <h1 class="fu d1">EPC Certificates<br><em id="hero-area">In Your Area</em></h1>
+
+          <div class="hero-location fu d2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span id="hero-towns-short">Loading coverage area…</span>
+          </div>
+
+          <p class="hero-sub fu d2">Fast, affordable energy performance certificates for sales, rentals &amp; compliance. <span id="hero-availability">Same and next-day appointments available.</span></p>
+
+          <div class="price-badge fu d3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8922A" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <strong id="hero-price">From £XX</strong>
+            <span>· Competitive local pricing</span>
+          </div>
+
+          <div class="btn-group fu d4">
+            <a href="#" id="hero-call-btn" class="btn btn-call">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.96-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Call Now
+            </a>
+            <a href="#contact" class="btn btn-outline">Get a Free Quote</a>
+          </div>
+
+          <div class="trust-row fu d5">
+            <span class="trust-chip"><span class="dot"></span> Accredited &amp; Insured</span>
+            <span class="trust-chip"><span class="dot"></span> Same / Next Day Available</span>
+            <span class="trust-chip"><span class="dot"></span> Certificate in <span id="trust-turnaround">&nbsp;24hrs</span></span>
+          </div>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="hero-card fu d3">
+          <div class="assessor-photo">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div class="photo-placeholder-text">PHOTO</div>
+          </div>
+          <div class="hero-card-name" id="card-name">Your Name</div>
+          <div class="hero-card-title">Domestic Energy Assessor</div>
+
+          <div class="card-stats">
+            <div class="stat-box">
+              <strong id="stat-years">—</strong>
+              <span>Years Experience</span>
+            </div>
+            <div class="stat-box">
+              <strong id="stat-price">£—</strong>
+              <span>From (EPC)</span>
+            </div>
+          </div>
+
+          <div class="card-btns">
+            <a href="#" id="card-call-btn" class="btn btn-call">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.96-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span id="card-phone-text">Call Now</span>
+            </a>
+            <a href="#" id="card-wa-btn" class="btn btn-wa">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+              WhatsApp
+            </a>
+          </div>
+
+          <div class="accred-badge" id="card-accred">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Accredited DEA
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       TRUST BAR
+  ════════════════════════════════════════ -->
+  <section id="trust-bar">
+    <div class="container">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="trust-icon">🛡️</div>
+          <strong>Accredited &amp; Insured</strong>
+          <span>Government registered DEA</span>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">📍</div>
+          <strong>Local &amp; Reliable</strong>
+          <span>Based in your area</span>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">⚡</div>
+          <strong>Fast Turnaround</strong>
+          <span id="bar-turnaround">Certificate within 24 hours</span>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">💷</div>
+          <strong>Competitive Pricing</strong>
+          <span id="bar-price">From £XX · no hidden fees</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SERVICES
+  ════════════════════════════════════════ -->
+  <section id="services">
+    <div class="container">
+      <div class="services-header">
+        <div>
+          <div class="label">What I Offer</div>
+          <h2>Energy Services That Keep You Compliant</h2>
+        </div>
+        <p>Whether you're selling, renting, or need to meet MEES regulations, I provide fast, professional energy assessments across the whole area.</p>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <span class="service-tag">Most Popular</span>
+          <div class="service-icon">🏠</div>
+          <h3>EPC for Property Sales</h3>
+          <p>A legal requirement when selling. I'll visit quickly, assess your property efficiently, and have your certificate registered on the national database — so your sale isn't held up.</p>
+        </div>
+
+        <div class="service-card">
+          <span class="service-tag">Landlords</span>
+          <div class="service-icon">🔑</div>
+          <h3>EPC for Rentals</h3>
+          <p>Properties must hold a valid EPC rated E or above to be legally let. Whether you have one rental or a full portfolio, I make compliance straightforward and hassle-free.</p>
+        </div>
+
+        <div class="service-card">
+          <span class="service-tag">Compliance</span>
+          <div class="service-icon">📋</div>
+          <h3>MEES Compliance</h3>
+          <p>Minimum Energy Efficiency Standards are tightening. I can assess your property's current rating and advise on what improvements would bring you up to the required standard.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">🏢</div>
+          <h3>Energy Reviews</h3>
+          <p>Thinking about improving your property's energy efficiency? I provide clear, practical advice on what changes would make the biggest difference to your EPC rating and energy bills.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">⚡</div>
+          <h3>Same Day Service</h3>
+          <p>Need it urgently? I offer same and next-day appointments for those times when you just can't wait. Call me directly and I'll do everything I can to fit you in fast.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">🏗️</div>
+          <h3>New Builds &amp; Conversions</h3>
+          <p>Newly built or converted properties need an EPC before they can be sold or rented. I work with developers and landlords to get new properties assessed and certified quickly.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       ABOUT
+  ════════════════════════════════════════ -->
+  <section id="about">
+    <div class="container">
+      <div class="about-inner">
+
+        <div class="about-visual">
+          <div class="about-photo-wrap">
+            <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#A0B0BC" stroke-width="0.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="about-card" id="about-card-years">
+            <strong>—</strong>
+            Years as a qualified DEA
+          </div>
+        </div>
+
+        <div>
+          <div class="label">About Me</div>
+          <h2 id="about-heading">Your Local EPC Expert</h2>
+          <p id="about-p1">Loading…</p>
+          <p id="about-p2">I understand that when you need an EPC, you often need it fast — whether you're putting a property on the market or making sure your rental meets MEES requirements. That's why I offer same and next-day appointments wherever possible, with your certificate delivered digitally within <span id="about-turnaround">24 hours</span> of the visit.</p>
+
+          <div class="pills">
+            <span class="pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="pill-accred">Accredited DEA</span>
+            </span>
+            <span class="pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="pill-years">Experienced Assessor</span>
+            </span>
+            <span class="pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Fully Insured
+            </span>
+            <span class="pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Results on National Database
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       COVERAGE
+  ════════════════════════════════════════ -->
+  <section id="coverage">
+    <div class="container" style="position:relative;z-index:1;">
+      <div class="label">Where I Work</div>
+      <h2>Areas Covered</h2>
+      <p class="intro" id="coverage-intro">Loading coverage area…</p>
+      <div class="area-grid" id="area-grid">
+        <!-- Populated by JS -->
+      </div>
+      <p style="color:#3A5A74; font-size:0.86rem; margin-top:22px;">
+        Don't see your area? <a href="#" id="coverage-call" style="color:#7EC8F0;">Give me a call</a> — I'm happy to travel.
+      </p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       PROCESS
+  ════════════════════════════════════════ -->
+  <section id="process">
+    <div class="container">
+      <div class="tc">
+        <div class="label" style="justify-content:center;">How It Works</div>
+        <h2>Your EPC in 3 Simple Steps</h2>
+        <p style="max-width:500px;margin:10px auto 0;">No fuss, no delays. Just a fast, professional service from booking to certificate.</p>
+      </div>
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="step-num">1</div>
+          <div class="step-connector"></div>
+          <h3>Book Your Appointment</h3>
+          <p>Call, WhatsApp, or fill in the form. I'll confirm a time that suits you — often same or next day.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">2</div>
+          <div class="step-connector"></div>
+          <h3>I Visit Your Property</h3>
+          <p>A quick, non-intrusive visit to carry out the assessment. Usually 30–60 minutes depending on size.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">3</div>
+          <h3>Certificate Delivered</h3>
+          <p>Your official EPC is emailed to you within <strong id="process-turnaround">24 hours</strong> and registered on the national database.</p>
+        </div>
+      </div>
+      <div class="tc mt-32">
+        <a href="#" id="process-call-btn" class="btn btn-primary" style="font-size:1.05rem; padding:17px 36px;">Book Your EPC Today</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       REVIEWS
+  ════════════════════════════════════════ -->
+  <section id="reviews">
+    <div class="container">
+      <div class="tc">
+        <div class="label" style="justify-content:center;">Testimonials</div>
+        <h2>What Clients Say</h2>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <span class="quote-mark">"</span>
+          <div class="stars">★★★★★</div>
+          <p class="review-text">Absolutely brilliant service. Came out the very next morning and had the EPC certificate with me by the afternoon. Couldn't have been easier and very reasonably priced.</p>
+          <div class="reviewer">
+            <div class="reviewer-av">SC</div>
+            <div><strong>Sarah C.</strong><span>Landlord</span></div>
+          </div>
+        </div>
+        <div class="review-card">
+          <span class="quote-mark">"</span>
+          <div class="stars">★★★★★</div>
+          <p class="review-text">I needed an EPC sorted urgently before exchange of contracts. Really professional, great value, and made what could have been a stressful situation completely painless.</p>
+          <div class="reviewer">
+            <div class="reviewer-av">MJ</div>
+            <div><strong>Mark J.</strong><span>Homeowner</span></div>
+          </div>
+        </div>
+        <div class="review-card">
+          <span class="quote-mark">"</span>
+          <div class="stars">★★★★★</div>
+          <p class="review-text">We use this service for all our managed properties. Fast, reliable, competitive pricing, and always happy to advise if there's anything that might affect a rating. Invaluable.</p>
+          <div class="reviewer">
+            <div class="reviewer-av">LB</div>
+            <div><strong>Laura B.</strong><span>Estate Agent</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       CTA BAND
+  ════════════════════════════════════════ -->
+  <section id="cta-band">
+    <div class="container">
+      <h2>Need an EPC <em>Quickly?</em><br>Get in Touch Today.</h2>
+      <p>Don't let a missing energy certificate hold up your sale or rental. Fast, local, and affordable.</p>
+      <div class="btn-group">
+        <a href="#" id="cta-call-btn" class="btn btn-call" style="font-size:1.05rem; padding:18px 36px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.96-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span id="cta-phone-label">Call Now</span>
+        </a>
+        <a href="#contact" class="btn btn-outline">Send an Enquiry</a>
+        <a href="#" id="cta-wa-btn" class="btn btn-wa">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       CONTACT
+  ════════════════════════════════════════ -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-inner">
+
+        <div>
+          <div class="label">Get In Touch</div>
+          <h2>Book Your EPC or Ask a Question</h2>
+          <p>Fill in the form and I'll get back to you as quickly as possible — usually within a few hours during working hours.</p>
+
+          <div style="margin-top:28px;">
+            <div class="contact-detail">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.96-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div><strong>Phone</strong><a href="#" id="contact-call-link">Loading…</a></div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div><strong>Email</strong><a href="#" id="contact-email-link">Loading…</a></div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div><strong>Hours</strong><p>Monday – Saturday, 8am – 6pm</p></div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div><strong>Coverage</strong><p id="contact-area">Loading…</p></div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <a href="#" id="contact-wa-btn" class="btn btn-wa">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-wrap">
+            <div class="form-title">Request a Free Quote</div>
+            <div class="form-sub">No obligation — I'll get back to you within a few hours.</div>
+            <form id="enquiry-form" novalidate>
+              <div class="fg">
+                <label for="f-name">Your Name *</label>
+                <input type="text" id="f-name" name="name" placeholder="e.g. John Smith" required autocomplete="name" />
+              </div>
+              <div class="fg-row">
+                <div class="fg">
+                  <label for="f-phone">Phone Number *</label>
+                  <input type="tel" id="f-phone" name="phone" placeholder="07xxx xxxxxx" required autocomplete="tel" />
+                </div>
+                <div class="fg">
+                  <label for="f-postcode">Property Postcode *</label>
+                  <input type="text" id="f-postcode" name="postcode" placeholder="e.g. TN1 2AB" required />
+                </div>
+              </div>
+              <div class="fg">
+                <label for="f-email">Email Address</label>
+                <input type="email" id="f-email" name="email" placeholder="your@email.co.uk" autocomplete="email" />
+              </div>
+              <div class="fg">
+                <label for="f-type">Type of EPC Needed</label>
+                <select id="f-type" name="type">
+                  <option value="">Select one…</option>
+                  <option>Sale — residential</option>
+                  <option>Rental — residential</option>
+                  <option>MEES compliance check</option>
+                  <option>Energy review / advice</option>
+                  <option>New build / conversion</option>
+                  <option>Not sure — please advise</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label for="f-msg">Anything Else? (optional)</label>
+                <textarea id="f-msg" name="message" placeholder="e.g. 3-bed semi, need it by Friday…"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary form-btn">Send Enquiry →</button>
+              <p class="form-note">🔒 Your details are kept private and only used to respond to your enquiry.</p>
+            </form>
+            <div id="form-success" style="display:none; text-align:center; padding:32px 0;">
+              <div style="font-size:3rem; margin-bottom:14px;">✅</div>
+              <h3 style="color:var(--ink); margin-bottom:8px;">Enquiry Received!</h3>
+              <p>Thanks for getting in touch. I'll aim to respond within a few hours.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4 id="footer-name">Your Name — EPC Assessor</h4>
+          <p id="footer-desc">Providing fast, affordable EPC certificates and energy assessments across the local area.</p>
+          <div class="footer-badge" id="footer-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Accredited DEA
+          </div>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p id="footer-phone">—</p>
+          <p id="footer-email">—</p>
+          <p style="margin-top:8px;">Mon–Sat · 8am – 6pm</p>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <p>EPC for Sales</p>
+          <p>EPC for Rentals</p>
+          <p>MEES Compliance</p>
+          <p>Energy Reviews</p>
+          <p>New Builds</p>
+        </div>
+      </div>
+      <hr class="footer-hr" />
+      <div class="footer-bottom">
+        <p>© <span id="yr"></span> <span id="footer-copy-name">EPC Assessor</span>. All rights reserved.</p>
+        <p id="footer-reg">Accreditation No: —</p>
+        <p>EPC assessments carried out in accordance with government regulations.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── MOBILE STICKY CALL ── -->
+  <a href="#" id="mob-call-btn" class="mob-call" aria-label="Call now">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.96-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <span id="mob-call-label">Tap to Call</span>
+  </a>
+
+  <!-- ── WHATSAPP FLOAT ── -->
+  <a href="#" id="wa-float-btn" class="wa-float" aria-label="Chat on WhatsApp" target="_blank" rel="noopener">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- ════════════════════════════════════════
+       CSV FETCH & POPULATE SCRIPT
+       Column mapping:
+         A = Name        B = Phone       C = Email
+         D = Accred Body E = Reg No      F = Years
+         G = Price       H = Turnaround  I = Availability
+         J = Towns       K = Extra Areas
+  ════════════════════════════════════════ -->
+  <script>
+    // ── CONFIG — paste your published Sheet 2 CSV URL here ──
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQNmHDzXAzLJKf4rgA3sSJYrdz9wXmXuxzR_S3CLXMhy_xqAytGuH0fCQgGy8aZDrUy3Wud8DYLOZq6/pub?gid=698354163&single=true&output=csv';
+
+    // ── PARSE CSV (handles quoted commas) ──
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      if (lines.length < 2) return null;
+      const headers = splitCSVLine(lines[0]);
+      const values  = splitCSVLine(lines[1]);
+      const row = {};
+      headers.forEach((h, i) => { row[h.trim()] = (values[i] || '').trim().replace(/^"|"$/g, ''); });
+      return row;
+    }
+    function splitCSVLine(line) {
+      const result = []; let cur = ''; let inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+        else { cur += c; }
+      }
+      result.push(cur);
+      return result;
+    }
+
+    // ── CLEAN PHONE for tel: links ──
+    function cleanPhone(p) { return p.replace(/\s+/g, ''); }
+
+    // ── WALINK ──
+    function waLink(p) {
+      let n = cleanPhone(p).replace(/^\+/, '').replace(/^0/, '44');
+      return 'https://wa.me/' + n;
+    }
+
+    // ── SET all call/WA links ──
+    function setLinks(phone, email) {
+      const tel = 'tel:' + cleanPhone(phone);
+      const wa  = waLink(phone);
+      const callEls = ['hdr-call','hero-call-btn','card-call-btn','process-call-btn','cta-call-btn','mob-call-btn','coverage-call','contact-call-link'];
+      const waEls   = ['card-wa-btn','cta-wa-btn','contact-wa-btn','wa-float-btn'];
+      callEls.forEach(id => { const el = document.getElementById(id); if(el) el.href = tel; });
+      waEls.forEach(id => { const el = document.getElementById(id); if(el) el.href = wa; });
+      const emailEl = document.getElementById('contact-email-link');
+      if (emailEl) { emailEl.href = 'mailto:' + email; emailEl.textContent = email; }
+    }
+
+    // ── BUILD AREA GRID ──
+    function buildAreaGrid(townsRaw, extraRaw) {
+      const grid = document.getElementById('area-grid');
+      if (!grid) return;
+      const allTowns = (townsRaw + (extraRaw ? ', ' + extraRaw : ''))
+        .split(/[,\n]+/).map(t => t.trim()).filter(Boolean);
+      grid.innerHTML = allTowns.map(t =>
+        `<div class="area-chip">${t}</div>`
+      ).join('');
+      return allTowns;
+    }
+
+    // ── FIRST N TOWNS for hero subtitle ──
+    function shortTownList(towns, n = 4) {
+      if (!towns || towns.length === 0) return '';
+      const shown = towns.slice(0, n).join(', ');
+      return towns.length > n ? shown + ' & more' : shown;
+    }
+
+    // ── POPULATE PAGE ──
+    function populate(row) {
+      // Helpers
+      const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+      const price  = row['Starting Price'] ? 'From £' + row['Starting Price'].replace(/[£from\s]/gi,'') : 'From £XX';
+      const priceN = row['Starting Price'] ? row['Starting Price'].replace(/[£from\s]/gi,'') : 'XX';
+      const name   = row['Name'] || 'Your Name';
+      const phone  = row['Phone'] || '';
+      const email  = row['Email'] || '';
+      const accred = row['Accreditation Body'] || 'Accredited DEA';
+      const regNo  = row['Reg Number'] || '—';
+      const years  = row['Years Experience'] || '—';
+      const turnar = row['Turnaround'] || '24 hours';
+      const avail  = row['Availability'] || 'Same and next-day appointments available';
+      const towns  = row['Towns'] || '';
+      const extra  = row['Additional Areas'] || '';
+
+      // Meta
+      const allTowns = buildAreaGrid(towns, extra);
+      const shortArea = shortTownList(allTowns);
+      document.title = `EPC Certificates ${shortArea} | ${name}`;
+      const metaDesc = document.getElementById('meta-desc');
+      if (metaDesc) metaDesc.content = `Fast, affordable EPC certificates in ${shortArea}. From £${priceN}. Fully accredited assessor. Call ${phone}.`;
+
+      // Header
+      set('hdr-name', name);
+      set('hdr-phone-num', phone);
+
+      // Hero
+      set('hero-area', shortArea || 'Your Area');
+      set('hero-towns-short', shortArea);
+      set('hero-availability', avail);
+      set('hero-price', price);
+      set('trust-turnaround', ' ' + turnar);
+
+      // Hero card
+      set('card-name', name);
+      set('card-phone-text', phone);
+      set('stat-years', years);
+      set('stat-price', '£' + priceN);
+      set('card-accred', '🛡️  ' + accred + ' · Reg: ' + regNo);
+
+      // Trust bar
+      set('bar-turnaround', 'Certificate within ' + turnar);
+      set('bar-price', price + ' · no hidden fees');
+
+      // About
+      set('about-heading', 'Your Local EPC Expert in ' + shortArea);
+      set('about-p1', `Hi, I'm ${name} — a fully qualified and government-accredited Domestic Energy Assessor based locally. I've been helping homeowners, landlords, and estate agents across ${shortArea} get their EPC certificates quickly and hassle-free for over ${years} years.`);
+      set('about-turnaround', turnar);
+      set('pill-accred', accred);
+      set('pill-years', years + '+ Years Experience');
+      const aboutCard = document.getElementById('about-card-years');
+      if (aboutCard) { aboutCard.querySelector('strong').textContent = years; }
+
+      // Coverage
+      set('coverage-intro', `I provide EPC certificates and energy assessments across ${shortArea} and all surrounding areas. Not sure if I cover your postcode? Just give me a call.`);
+
+      // Process
+      set('process-turnaround', turnar);
+
+      // CTA band
+      set('cta-phone-label', 'Call ' + phone);
+
+      // Contact section
+      set('contact-call-link', phone);
+      set('contact-area', shortArea + ' and surrounding areas');
+
+      // Footer
+      set('footer-name', name + ' — EPC Assessor');
+      set('footer-desc', `Providing fast, affordable EPC certificates and energy assessments across ${shortArea} and the surrounding area.`);
+      set('footer-badge', '🛡️  Accredited DEA · ' + accred);
+      set('footer-phone', phone);
+      set('footer-email', email);
+      set('footer-copy-name', name);
+      set('footer-reg', 'Accreditation No: ' + regNo);
+
+      // Mobile call bar
+      set('mob-call-label', 'Tap to Call: ' + phone);
+
+      // All links
+      setLinks(phone, email);
+
+      // Footer year
+      const yr = document.getElementById('yr');
+      if (yr) yr.textContent = new Date().getFullYear();
+    }
+
+    // ── FETCH & INIT ──
+    async function init() {
+      const loader = document.getElementById('loading-screen');
+      try {
+        const res  = await fetch(CSV_URL + '&cachebust=' + Date.now());
+        const text = await res.text();
+        const row  = parseCSV(text);
+        if (row && Object.values(row).some(v => v)) {
+          populate(row);
+        } else {
+          // No approved data — show default template
+          document.getElementById('yr').textContent = new Date().getFullYear();
+          buildAreaGrid('Your Town, Nearby Town, Another Area');
+        }
+      } catch(e) {
+        console.warn('CSV fetch failed — showing default template', e);
+        document.getElementById('yr').textContent = new Date().getFullYear();
+        buildAreaGrid('Your Town, Nearby Town, Another Area');
+      } finally {
+        setTimeout(() => { loader.classList.add('hidden'); }, 600);
+      }
+    }
+
+    // ── FORM ──
+    const form = document.getElementById('enquiry-form');
+    if (form) {
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const n = form.querySelector('#f-name').value.trim();
+        const p = form.querySelector('#f-phone').value.trim();
+        const pc = form.querySelector('#f-postcode').value.trim();
+        if (!n || !p || !pc) { alert('Please fill in your name, phone number and property postcode.'); return; }
+        // ── Wire up to your form handler here (Formspree, Netlify Forms etc.) ──
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      });
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
