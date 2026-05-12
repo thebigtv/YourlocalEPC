@@ -621,9 +621,10 @@
 
         <!-- Profile Card -->
         <div class="hero-card fu d3">
-          <div class="assessor-photo">
-  <img src="https://i.postimg.cc/xT9CxN0T/att-Jn-UPETg4WCVR5b-Hq5Tsn-MJz-Rklos-XQDkd6nd-TOol9Jc.jpg" alt="Photo of [NAME]" style="width:100%;height:100%;object-fit:cover;" />
-</div>
+          <div class="assessor-photo" id="hero-photo-wrap">
+            <svg id="hero-photo-svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div class="photo-placeholder-text" id="hero-photo-placeholder">PHOTO</div>
+          </div>
           <div class="hero-card-name" id="card-name">Your Name</div>
           <div class="hero-card-title">Domestic Energy Assessor</div>
 
@@ -754,9 +755,9 @@
       <div class="about-inner">
 
         <div class="about-visual">
-          <div class="about-photo-wrap">
-  <img src="https://i.postimg.cc/xT9CxN0T/att-Jn-UPETg4WCVR5b-Hq5Tsn-MJz-Rklos-XQDkd6nd-TOol9Jc.jpg" alt="Photo of [NAME]" style="width:100%;height:100%;object-fit:cover;" />
-</div>
+          <div class="about-photo-wrap" id="about-photo-wrap">
+            <svg id="about-photo-svg" width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#A0B0BC" stroke-width="0.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
           <div class="about-card" id="about-card-years">
             <strong>—</strong>
             Years as a qualified DEA
@@ -1147,6 +1148,7 @@
       const avail  = row['Availability'] || 'Same and next-day appointments available';
       const towns  = row['Towns'] || '';
       const extra  = row['Additional Areas'] || '';
+      const photo  = row['Photo URL'] || '';
 
       // Meta
       const allTowns = buildAreaGrid(towns, extra);
@@ -1213,6 +1215,20 @@
 
       // All links
       setLinks(phone, email);
+
+      // ── PHOTOS ──
+      if (photo) {
+        // Hero card photo
+        const heroWrap = document.getElementById('hero-photo-wrap');
+        if (heroWrap) {
+          heroWrap.innerHTML = `<img src="${photo}" alt="Photo of ${name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'" />`;
+        }
+        // About section photo
+        const aboutWrap = document.getElementById('about-photo-wrap');
+        if (aboutWrap) {
+          aboutWrap.innerHTML = `<img src="${photo}" alt="Photo of ${name}" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none'" />`;
+        }
+      }
 
       // Footer year
       const yr = document.getElementById('yr');
